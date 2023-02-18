@@ -1,0 +1,17 @@
+/straight
+.emacs.desktop
+.emacs.desktop.lock
+projectile.cache
+projectile-bookmarks.eld
+.swp
+/custom.el
+/corgi-user-config.el
+/transient
+recentf
+smex-items
+.nrepl-port
+corgi-user-config.el
+auto-save-list
+backups
+*~
+var

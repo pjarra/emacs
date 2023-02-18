@@ -13,7 +13,10 @@
 ;; `user-keys.el', and your new binding will do the right thing regardless of
 ;; the language/mode you are in.
 
-((js-mode ( :eval/last-sexp js-send-last-sexp
+((default (:kill-to-eol kill-line))
+ (clojure-mode ( :kill-to-eol paredit-kill))
+ (cider-repl-mode (:kill-to-eol paredit-kill))
+ (js-mode ( :eval/last-sexp js-send-last-sexp
             :eval/buffer js-send-buffer
             :eval/region js-send-region
             :repl/toggle js-comint-start-or-switch-to-repl)))

@@ -13,6 +13,11 @@
 ;; edit it to your heart's content.
 
 (let ((straight-current-profile 'corgi))
+  (use-package exec-path-from-shell :straight t
+    :config
+    (when (memq window-system '(mac ns x))
+      (exec-path-from-shell-initialize)))
+
   ;; Change a bunch of Emacs defaults, from disabling the menubar and toolbar,
   ;; to fixing modifier keys on Mac and disabling the system bell.
   (use-package corgi-defaults)
@@ -122,7 +127,7 @@
   (load-theme 'sanityinc-tomorrow-bright t))
 
 ;; Maybe set a nice font to go with it
-(set-frame-font "Iosevka Fixed")
+(set-frame-font "Iosevka Fixed Extended 14")
 
 ;; Enable our "connection indicator" for CIDER. This will add a colored marker
 ;; to the modeline for every REPL the current buffer is connected to, color

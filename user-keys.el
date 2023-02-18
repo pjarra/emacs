@@ -29,9 +29,13 @@
 
  ;; Bindings for commands are usually only active in normal and visual state.
  (normal|visual
+  ("D" :kill-to-eol)
   ("SPC"
    ("0" "Select Treemacs" treemacs-select-window)
    ("f"
     ("t" "Turn Treemacs on/off" treemacs)
     ("T" "Focus current file in file tree" treemacs-find-file))
-   )))
+   ))
+ (insert
+  ("C->" :sexp/slurp-forward)
+  ("C-<" :sexp/slurp-backward)))

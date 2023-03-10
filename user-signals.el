@@ -13,10 +13,21 @@
 ;; `user-keys.el', and your new binding will do the right thing regardless of
 ;; the language/mode you are in.
 
-((default (:kill-to-eol kill-line))
- (clojure-mode ( :kill-to-eol paredit-kill))
+((default (
+           :kill-to-eol kill-line
+           :toggle-truncate-mode toggle-truncate-lines
+           :reload-init-file reload-emacs-init
+           :set-theme set-theme))
+ (clojure-mode (
+                :kill-to-eol paredit-kill
+                :cider-format-region cider-format-region
+                :cider-format-defun cider-format-defun
+                :search-in-project rg-dwim-project-dir))
+ (clojurescript-mode (
+                      :repl/set-ns cider-change-ns-to-current))
  (cider-repl-mode (:kill-to-eol paredit-kill))
- (js-mode ( :eval/last-sexp js-send-last-sexp
-            :eval/buffer js-send-buffer
-            :eval/region js-send-region
-            :repl/toggle js-comint-start-or-switch-to-repl)))
+ (js-mode (
+           :eval/last-sexp js-send-last-sexp
+           :eval/buffer js-send-buffer
+           :eval/region js-send-region
+           :repl/toggle js-comint-start-or-switch-to-repl)))

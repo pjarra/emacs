@@ -31,11 +31,27 @@
  (normal|visual
   ("D" :kill-to-eol)
   ("SPC"
+   ("R" :reload-init-file)
+   ("t"
+    ("l" :toggle-truncate-mode)
+    ("t" :set-theme))
    ("0" "Select Treemacs" treemacs-select-window)
    ("f"
     ("t" "Turn Treemacs on/off" treemacs)
     ("T" "Focus current file in file tree" treemacs-find-file))
-   ))
+   ("s"
+    ("p" "Search in Project" :search-in-project))
+   )
+
+  ;; project / mode specific
+  (","
+   ("f"
+    ("r" :cider-format-region)
+    ("f" :cider-format-defun))
+   ("s"
+    ("t" "Toggle REPL" cider-switch-to-last-clojure-buffer)
+    ("s" "Set REPL type" cider-set-repl-type))))
+
  (insert
   ("C->" :sexp/slurp-forward)
   ("C-<" :sexp/slurp-backward)))

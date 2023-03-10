@@ -1,3 +1,9 @@
+;; Variables needed
+(setq font-size
+      (cond
+       ((equal system-name "PK-L15") 11)
+       (14)))
+
 ;; This is your Emacs init file, it's where all initialization happens. You can
 ;; open it any time with `SPC f e i' (file-emacs-init)
 
@@ -104,7 +110,7 @@
 ;; Start the emacs-server, so you can open files from the command line with
 ;; `emacsclient -n <file>' (we like to put `alias en="emacsclient -n"' in our
 ;; shell config).
-(server-start)
+;;(server-start)
 
 ;; Emacs has "registers", places to keep small snippets of text. We make it easy
 ;; to run a snippet of Clojure code in such a register, just press comma twice
@@ -120,14 +126,8 @@
 (set-register ?g "#_clj (user/go)")
 (set-register ?b "#_clj (user/browse)")
 
-;; We like this theme because it looks nice and works well enough in terminals,
-;; swap it out with whatever suits you.
-(use-package color-theme-sanityinc-tomorrow
-  :config
-  (load-theme 'sanityinc-tomorrow-bright t))
-
 ;; Maybe set a nice font to go with it
-(set-frame-font "Iosevka Fixed Extended 14")
+(set-frame-font (format "Iosevka Fixed Extended %s" font-size))
 
 ;; Enable our "connection indicator" for CIDER. This will add a colored marker
 ;; to the modeline for every REPL the current buffer is connected to, color
@@ -154,15 +154,152 @@
               (delete-trailing-whitespace))))
 
 ;; Enabling desktop-save-mode will save and restore all buffers between sessions
-(setq desktop-restore-frames nil)
+(setq desktop-restore-frames nil
+      desktop-restore-eager 10)
 (desktop-save-mode 1)
+;;(add-to-list 'desktop-modes-not-to-save 'clojure-mode)
+;;(add-to-list 'desktop-modes-not-to-save 'clojure-script-mode)
+
+;; end of corgi defaults
+;; begin of customized things
+
+(use-package color-theme-sanityinc-tomorrow
+  :config
+  (load-theme 'sanityinc-tomorrow-bright))
+
+(use-package humanoid-themes)
+
+(defun disable-other-themes ()
+  "Disables all but the most current theme."
+  (interactive)
+  (mapc 'disable-theme (cdr custom-enabled-themes)))
+
+(defun set-theme ()
+  "Load a theme and disable all others.
+  `load-theme' stacks themes, i.e. settings from other themes
+  are not disabled, unless overwritten by the new one. Most often,
+  this is not what I want and leads to incompatible colors.
+  All activated themes are stored in `custom-enabled-themes'.
+  `set-theme' calls `load-theme' and then `disable-other-themes'."
+  (interactive)
+  (call-interactively 'load-theme)
+  (disable-other-themes))
+
+(defun reload-emacs-init ()
+  (interactive)
+  (load-file "~/.emacs.d/init.el"))
+
+(use-package exec-path-from-shell :straight t
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
+
+(when (not (eq system-type 'windows-nt))
+(use-package fzf :straight t
+:config
+(setq fzf/args "-x --color bw --print-query --margin=1,0 --no-hscroll"
+      fzf/executable "fzf"
+      fzf/git-grep-args "-i --line-number %s"
+        ;;;; command used for `fzf-grep-*` functions
+        ;;;; example usage for ripgrep:
+      fzf/grep-command "rg --no-heading -nH"
+        ;;;; fzf/grep-command "grep -nrH"
+        ;;;; If nil, the fzf buffer will appear at the top of the window
+      fzf/position-bottom t
+      fzf/window-height 15)))
+
+(use-package rg :straight t)
+
+;; https://github.com/clojure-emacs/clj-refactor.el
+;; https://cheatography.com/bilus/cheat-sheets/clj-refactor/pdf/
+(use-package clj-refactor)
+(add-hook 'clojure-mode-hook #'(lambda ()
+                                 (clj-refactor-mode)
+                                 ;; yas used by clj-refactor
+                                 (yas-minor-mode 1)
+                                 (cljr-add-keybindings-with-prefix "C-c r")
+                                 (setq before-save-hook nil)))
+(add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+(add-hook 'clojure-mode-hook #'paredit-mode)
+
+;; cider-repl-set-ns has a bug in cljs mode; it switches the repl to clj
+(defun cider-change-ns-to-current ()
+  (interactive)
+  (let ((repl-type (cider-repl-type-for-buffer))
+        (current-ns (cider-current-ns)))
+    (cider-repl-set-ns current-ns)
+    (when (eq 'cljs repl-type)
+      (cider-switch-to-repl-buffer)
+      (sit-for 1)
+      (cider-set-repl-type repl-type))))
+
+(defun save-without-save-hooks ()
+  "Save current buffer without executing before-save-hooks,
+   or more generally, without making any changes to its current state."
+  (interactive)
+  (if buffer-read-only
+      (save-buffer)
+    (progn
+      (read-only-mode 1)
+      (save-buffer)
+      (read-only-mode 0))))
+
+(evil-ex-define-cmd "S[ave]" 'save-without-save-hooks)
+
+;; - end -
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(beacon-color "#d54e53")
  '(custom-safe-themes
-   '("1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default)))
+   '("191a1493fc7c3252ae949cc42cecc454900e3d4d1feb96f480cf9d1c40c093ee" "537eeec63a0fb65fb2d26e97e399692047b32e001c627665afb02b1f99d756b1" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default))
+ '(fci-rule-color "#424242")
+ '(flycheck-color-mode-line-face-to-color 'mode-line-buffer-id)
+ '(frame-background-mode 'dark)
+ '(safe-local-variable-values
+   '((elisp-lint-indent-specs
+      (if-let* . 2)
+      (when-let* . 1)
+      (let* . defun)
+      (nrepl-dbind-response . 2)
+      (cider-save-marker . 1)
+      (cider-propertize-region . 1)
+      (cider-map-repls . 1)
+      (cider--jack-in . 1)
+      (cider--make-result-overlay . 1)
+      (insert-label . defun)
+      (insert-align-label . defun)
+      (insert-rect . defun)
+      (cl-defun . 2)
+      (with-parsed-tramp-file-name . 2)
+      (thread-first . 0)
+      (thread-last . 0))
+     (checkdoc-package-keywords-flag)))
+ '(vc-annotate-background nil)
+ '(vc-annotate-color-map
+   '((20 . "#d54e53")
+     (40 . "#e78c45")
+     (60 . "#e7c547")
+     (80 . "#b9ca4a")
+     (100 . "#70c0b1")
+     (120 . "#7aa6da")
+     (140 . "#c397d8")
+     (160 . "#d54e53")
+     (180 . "#e78c45")
+     (200 . "#e7c547")
+     (220 . "#b9ca4a")
+     (240 . "#70c0b1")
+     (260 . "#7aa6da")
+     (280 . "#c397d8")
+     (300 . "#d54e53")
+     (320 . "#e78c45")
+     (340 . "#e7c547")
+     (360 . "#b9ca4a")))
+ '(vc-annotate-very-old-color nil)
+ '(window-divider-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

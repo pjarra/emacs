@@ -19,10 +19,18 @@
            :reload-init-file reload-emacs-init
            :set-theme set-theme))
  (clojure-mode (
+                :sexp/slurp-backward sp-backward-slurp-sexp
+                :sexp/barf-backward sp-backward-barf-sexp
                 :kill-to-eol paredit-kill
                 :cider-format-region cider-format-region
                 :cider-format-defun cider-format-defun
-                :search-in-project rg-dwim-project-dir))
+                :search-in-project rg-dwim-project-dir
+                :wrap/unwrap sp-splice-sexp
+                :wrap/wrap-round paredit-wrap-round
+                :wrap/wrap-square paredit-wrap-square
+                :wrap/wrap-angled paredit-wrap-angled
+                :wrap/wrap-curly paredit-wrap-curly
+                :eval/defun-at-point cider-eval-defun-at-point))
  (clojurescript-mode (
                       :repl/set-ns cider-change-ns-to-current))
  (cider-repl-mode (:kill-to-eol paredit-kill))

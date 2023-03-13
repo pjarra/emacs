@@ -29,6 +29,8 @@
 
  ;; Bindings for commands are usually only active in normal and visual state.
  (normal|visual
+  ("M->" "Slurp Backward" :sexp/slurp-backward)
+  ("M-<" "Barf Backward" :sexp/barf-backward)
   ("D" :kill-to-eol)
   ("SPC"
    ("R" :reload-init-file)
@@ -45,9 +47,18 @@
 
   ;; project / mode specific
   (","
+   ("w" "Wrap with..."
+    ("x" "Unwrap" :wrap/unwrap)
+    ("(" "Round" :wrap/wrap-round)
+    ("[" "Square" :wrap/wrap-square)
+    ("{" "Curly" :wrap/wrap-curly)
+    ("<" "Angled" :wrap/wrap-angled))
    ("f"
     ("r" :cider-format-region)
     ("f" :cider-format-defun))
+   ("e"
+    ("." :eval/defun-at-point))
+   ("[Ret]" :eval/defun-at-point)
    ("s"
     ("t" "Toggle REPL" cider-switch-to-last-clojure-buffer)
     ("s" "Set REPL type" cider-set-repl-type))))

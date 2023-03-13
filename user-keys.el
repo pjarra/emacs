@@ -58,7 +58,6 @@
     ("f" :cider-format-defun))
    ("e"
     ("." :eval/defun-at-point))
-   ("[Ret]" :eval/defun-at-point)
    ("s"
     ("t" "Toggle REPL" cider-switch-to-last-clojure-buffer)
     ("s" "Set REPL type" cider-set-repl-type))))

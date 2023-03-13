@@ -29,8 +29,7 @@
                 :wrap/wrap-round paredit-wrap-round
                 :wrap/wrap-square paredit-wrap-square
                 :wrap/wrap-angled paredit-wrap-angled
-                :wrap/wrap-curly paredit-wrap-curly
-                :eval/defun-at-point cider-eval-defun-at-point))
+                :wrap/wrap-curly paredit-wrap-curly))
  (clojurescript-mode (
                       :repl/set-ns cider-change-ns-to-current))
  (cider-repl-mode (:kill-to-eol paredit-kill))

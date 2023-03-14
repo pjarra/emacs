@@ -47,6 +47,12 @@
   ;; `set-register' calls below.
   (use-package corgi-clojure)
 
+  ;; https://github.com/clojure-emacs/clj-refactor.el
+  ;; https://cheatography.com/bilus/cheat-sheets/clj-refactor/pdf/
+  (use-package clj-refactor)
+  ;; Requires clj-kondo in PATH (https://github.com/clj-kondo/clj-kondo/releases)
+  (use-package flycheck-clj-kondo)
+
   ;; Emacs Lisp config, mainly to have a development experience that feels
   ;; similar to using CIDER and Clojure. (show results in overlay, threading
   ;; refactorings)
@@ -153,6 +159,15 @@
             (when (derived-mode-p 'prog-mode)
               (delete-trailing-whitespace))))
 
+(add-hook 'clojure-mode-hook #'(lambda ()
+                                 (clj-refactor-mode)
+                                 ;; yas used by clj-refactor
+                                 (yas-minor-mode 1)
+                                 (cljr-add-keybindings-with-prefix "C-c r")))
+(add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+(add-hook 'clojure-mode-hook #'paredit-mode)
+(add-hook 'clojure-mode-hook #'flycheck-mode)
+
 ;; Enabling desktop-save-mode will save and restore all buffers between sessions
 (setq desktop-restore-frames nil
       desktop-restore-eager 10)
@@ -210,29 +225,6 @@
 
 (use-package rg :straight t)
 
-;; https://github.com/clojure-emacs/clj-refactor.el
-;; https://cheatography.com/bilus/cheat-sheets/clj-refactor/pdf/
-(use-package clj-refactor)
-(add-hook 'clojure-mode-hook #'(lambda ()
-                                 (clj-refactor-mode)
-                                 ;; yas used by clj-refactor
-                                 (yas-minor-mode 1)
-                                 (cljr-add-keybindings-with-prefix "C-c r")
-                                 (setq before-save-hook nil)))
-(add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
-(add-hook 'clojure-mode-hook #'paredit-mode)
-
-;; cider-repl-set-ns has a bug in cljs mode; it switches the repl to clj
-(defun cider-change-ns-to-current ()
-  (interactive)
-  (let ((repl-type (cider-repl-type-for-buffer))
-        (current-ns (cider-current-ns)))
-    (cider-repl-set-ns current-ns)
-    (when (eq 'cljs repl-type)
-      (cider-switch-to-repl-buffer)
-      (sit-for 1)
-      (cider-set-repl-type repl-type))))
-
 (defun save-without-save-hooks ()
   "Save current buffer without executing before-save-hooks,
    or more generally, without making any changes to its current state."
@@ -245,6 +237,7 @@
       (read-only-mode 0))))
 
 (evil-ex-define-cmd "S[ave]" 'save-without-save-hooks)
+(evil-define-command "!" nil)
 
 ;; - end -
 

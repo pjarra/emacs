@@ -42,8 +42,16 @@
     ("t" "Turn Treemacs on/off" treemacs)
     ("T" "Focus current file in file tree" treemacs-find-file))
    ("s"
-    ("p" "Search in Project" :search-in-project))
-   )
+    ("p" "Search in Project" :search-in-project)))
+
+  ;; No prefix ! triggers diagnostics
+  ("!"
+   ("f" "First error" :lint/first-error)
+   ("n" "Next error" :lint/next-error)
+   ("p" "Previous error" :lint/previous-error)
+   ("l" "List errors" :lint/list-errors)
+   ("?" "Explain error" :lint/describe-error)
+   ("d" "Display error" :lint/display-error))
 
   ;; project / mode specific
   (","
@@ -52,15 +60,18 @@
     ("(" "Round" :wrap/wrap-round)
     ("[" "Square" :wrap/wrap-square)
     ("{" "Curly" :wrap/wrap-curly)
-    ("<" "Angled" :wrap/wrap-angled))
-   ("f"
-    ("r" :cider-format-region)
-    ("f" :cider-format-defun))
+    ("<" "Angled" :wrap/wrap-angled)
+    ("\"" "Quotes" ))
+   ("f" "Format"
+    ("r" "Region" :format/region)
+    ("f" "Function" :format/defun)
+    ("b" "Buffer" :format/buffer))
    ("e"
     ("." :eval/defun-at-point))
    ("s"
     ("t" "Toggle REPL" cider-switch-to-last-clojure-buffer)
-    ("s" "Set REPL type" cider-set-repl-type))))
+    ("s" "Set REPL type" cider-set-repl-type)))
+  )
 
  (insert
   ("C->" :sexp/slurp-forward)

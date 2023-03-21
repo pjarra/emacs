@@ -41,6 +41,7 @@
                 :wrap/wrap-quotes paredit-meta-doublequote))
  (clojurescript-mode (
                       :repl/set-ns cider-change-ns-to-current))
+ (cider-repl-mode (:repl/set-type cider-set-repl-type))
  (cider-repl-mode (:kill-to-eol paredit-kill))
  (js-mode (
            :eval/last-sexp js-send-last-sexp

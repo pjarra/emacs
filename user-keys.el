@@ -70,8 +70,7 @@
     ("." :eval/defun-at-point))
    ("s"
     ("t" "Toggle REPL" cider-switch-to-last-clojure-buffer)
-    ("s" "Set REPL type" cider-set-repl-type)))
-  )
+    ("s" "Set REPL type" :repl/set-type))))
 
  (insert
   ("C->" :sexp/slurp-forward)

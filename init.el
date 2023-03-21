@@ -1,8 +1,11 @@
-;; Variables needed
-(setq font-size
+(setq sys
       (cond
-       ((equal system-name "PK-L15") 11)
-       (14)))
+       ((and (equal system-name "PK-L15") (equal system-type 'gnu/linux)) 'wsl)
+       ((equal system-name "PK-L15") 'windows)
+       (t 'mac)))
+
+;; Variables needed
+(setq font-size (if (member sys '(wsl windows)) 11 14))
 
 ;; This is your Emacs init file, it's where all initialization happens. You can
 ;; open it any time with `SPC f e i' (file-emacs-init)
@@ -40,18 +43,18 @@
   ;; file.
   (use-package corgi-commands)
 
+  ;; https://github.com/clojure-emacs/clj-refactor.el
+  ;; https://cheatography.com/bilus/cheat-sheets/clj-refactor/pdf/
+  (use-package clj-refactor)
+  ;; Requires clj-kondo in PATH (https://github.com/clj-kondo/clj-kondo/releases)
+  (use-package flycheck-clj-kondo)
+
   ;; Extensive setup for a good Clojure experience, including clojure-mode,
   ;; CIDER, and a modeline indicator that shows which REPLs your evaluations go
   ;; to.
   ;; Also contains `corgi/cider-pprint-eval-register', bound to `,,', see
   ;; `set-register' calls below.
   (use-package corgi-clojure)
-
-  ;; https://github.com/clojure-emacs/clj-refactor.el
-  ;; https://cheatography.com/bilus/cheat-sheets/clj-refactor/pdf/
-  (use-package clj-refactor)
-  ;; Requires clj-kondo in PATH (https://github.com/clj-kondo/clj-kondo/releases)
-  (use-package flycheck-clj-kondo)
 
   ;; Emacs Lisp config, mainly to have a development experience that feels
   ;; similar to using CIDER and Clojure. (show results in overlay, threading
@@ -132,8 +135,10 @@
 (set-register ?g "#_clj (user/go)")
 (set-register ?b "#_clj (user/browse)")
 
-;; Maybe set a nice font to go with it
-(set-frame-font (format "Iosevka Fixed Extended %s" font-size))
+(if (member sys '(mac windows))
+    (set-frame-font (format "Source Code Pro %s" font-size))
+  (set-frame-font (format "Iosevka Fixed Extended %s" font-size)))
+
 
 ;; Enable our "connection indicator" for CIDER. This will add a colored marker
 ;; to the modeline for every REPL the current buffer is connected to, color
@@ -248,12 +253,14 @@
  ;; If there is more than one, they won't work right.
  '(beacon-color "#d54e53")
  '(custom-safe-themes
-   '("191a1493fc7c3252ae949cc42cecc454900e3d4d1feb96f480cf9d1c40c093ee" "537eeec63a0fb65fb2d26e97e399692047b32e001c627665afb02b1f99d756b1" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default))
+   (quote
+    ("191a1493fc7c3252ae949cc42cecc454900e3d4d1feb96f480cf9d1c40c093ee" "537eeec63a0fb65fb2d26e97e399692047b32e001c627665afb02b1f99d756b1" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default)))
  '(fci-rule-color "#424242")
- '(flycheck-color-mode-line-face-to-color 'mode-line-buffer-id)
- '(frame-background-mode 'dark)
+ '(flycheck-color-mode-line-face-to-color (quote mode-line-buffer-id))
+ '(frame-background-mode (quote dark))
  '(safe-local-variable-values
-   '((elisp-lint-indent-specs
+   (quote
+    ((elisp-lint-indent-specs
       (if-let* . 2)
       (when-let* . 1)
       (let* . defun)
@@ -270,10 +277,11 @@
       (with-parsed-tramp-file-name . 2)
       (thread-first . 0)
       (thread-last . 0))
-     (checkdoc-package-keywords-flag)))
+     (checkdoc-package-keywords-flag))))
  '(vc-annotate-background nil)
  '(vc-annotate-color-map
-   '((20 . "#d54e53")
+   (quote
+    ((20 . "#d54e53")
      (40 . "#e78c45")
      (60 . "#e7c547")
      (80 . "#b9ca4a")
@@ -290,7 +298,7 @@
      (300 . "#d54e53")
      (320 . "#e78c45")
      (340 . "#e7c547")
-     (360 . "#b9ca4a")))
+     (360 . "#b9ca4a"))))
  '(vc-annotate-very-old-color nil)
  '(window-divider-mode nil))
 (custom-set-faces
